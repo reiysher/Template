@@ -16,9 +16,20 @@ internal class LogingBehavior<TRequest, TResponse>
         RequestHandlerDelegate<TResponse> next,
         CancellationToken cancellationToken)
     {
-        // todo: move into config "enable sensetive data logging" and logging only if enabled.
-        _logger.LogInformation("Handling [{@Request}]", typeof(TRequest).Name);
+        try
+        {
+            _logger.LogInformation("Handling [{@Request}]", typeof(TRequest).Name);
 
-        return await next();
+            var result = await next();
+
+            _logger.LogInformation("[{@Request}] processed successful", typeof(TRequest).Name);
+
+            return result;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "[{@Request}] processing failed", typeof(TRequest).Name);
+            throw;
+        }
     }
 }
