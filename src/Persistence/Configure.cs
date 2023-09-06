@@ -1,20 +1,22 @@
 ﻿using Application.Abstractions.Persistence;
+using Application.Features.Subscriptions.Repositories;
 using Domain.Authors.Repositories;
 using Domain.Notes.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using MongoDB.Bson.Serialization.Serializers;
-using MongoDB.Bson.Serialization;
 using MongoDB.Bson;
+using MongoDB.Bson.Serialization;
+using MongoDB.Bson.Serialization.Serializers;
 using MongoDB.Driver;
 using Persistence.Contexts;
+using Persistence.EventSourcing;
+using Persistence.Initialization;
 using Persistence.Repositories.Authors;
 using Persistence.Repositories.Notes;
+using Persistence.Repositories.Subscriptions;
 using Persistence.Settings;
-using Persistence.Initialization;
-using Persistence.EventSourcing;
 
 namespace Persistence;
 
@@ -66,6 +68,7 @@ public static class Configure
         // Event Sourcing
 
         services.AddScoped<IEventStore, EventStore>();
+        services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();
 
         return services;
     }
