@@ -1,13 +1,40 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net7.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Domain\Domain.csproj" />
-  </ItemGroup>
+
+	<ItemGroup>
+		<FrameworkReference Include="Microsoft.AspNetCore.App" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Domain\Domain.csproj" />
+		<ProjectReference Include="..\Messaging\Messaging.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="FluentValidation" Version="11.7.1" />
+		<PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.7.1" />
+		<PackageReference Include="MassTransit.Abstractions" Version="8.1.0" />
+		<PackageReference Include="MediatR" Version="12.1.1" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Features\Authors\Builders\" />
+	  <Folder Include="Features\Authors\Factories\" />
+	  <Folder Include="Features\Authors\Services\" />
+	  <Folder Include="Features\Notes\DomainEventHandlers\" />
+	  <Folder Include="Features\Notes\Builders\" />
+	  <Folder Include="Features\Notes\Factories\" />
+	  <Folder Include="Features\Notifications\Builders\" />
+	  <Folder Include="Features\Notifications\Commands\" />
+	  <Folder Include="Features\Notifications\DomainEventHandlers\" />
+	  <Folder Include="Features\Notifications\Factories\" />
+	  <Folder Include="Features\Notifications\Queries\" />
+	</ItemGroup>
 
 </Project>
