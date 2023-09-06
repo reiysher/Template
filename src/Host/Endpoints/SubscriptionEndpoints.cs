@@ -19,9 +19,9 @@ internal static class SubscriptionEndpoints
             CancellationToken cancellationToken) =>
         {
             //var command = new CreateAuthorCommand(CreateSubscriptionCommand.FirstName, request.BirthDay);
-            await sender.Send(request, cancellationToken);
+            var result = await sender.Send(request, cancellationToken);
 
-            return Results.Ok();
+            return Results.Ok(result);
         })
             .Accepts<CreateSubscriptionCommand>(MediaTypeNames.Application.Json)
             .AllowAnonymous();
