@@ -15,10 +15,10 @@ internal class SubscriptionRepository : ISubscriptionRepository
 
     public Task<Subscription> GetById(Guid subscriptionId, CancellationToken cancellationToken)
     {
-        return _eventStore.AggregateStream<Subscription>(subscriptionId, cancellationToken: cancellationToken);
+        return _eventStore.AggregateStream<Subscription>(subscriptionId, cancellationToken);
     }
 
-    public async Task Save(Subscription subscription, CancellationToken cancellationToken)
+    public async Task SaveEvents(Subscription subscription, CancellationToken cancellationToken)
     {
         foreach (var domainEvent in subscription.DomainEvents)
         {

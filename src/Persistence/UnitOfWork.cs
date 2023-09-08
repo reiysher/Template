@@ -18,7 +18,7 @@ internal class UnitOfWork : IUnitOfWork
         _dispatcher = dispatcher;
     }
 
-    public async Task<int> SaveChangesAsync(CancellationToken cancellationToken)
+    public async Task<int> Commit(CancellationToken cancellationToken)
     {
         var result = await _context.SaveChangesAsync(cancellationToken);
 

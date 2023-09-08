@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Domain.Common;
+using Microsoft.EntityFrameworkCore;
 using Persistence.Contexts;
 using System.Text.Json;
 
@@ -8,9 +9,6 @@ internal class EventStore : IEventStore
 {
     private readonly ApplicationDbContext _dbContext;
     private readonly JsonSerializerOptions _jsonOptions;
-
-    private const string When = nameof(When);
-    private const string Version = nameof(Version);
 
     public EventStore(ApplicationDbContext dbContext)
     {
@@ -22,7 +20,7 @@ internal class EventStore : IEventStore
         };
     }
 
-    public async Task AppendEvent<TStream>(Guid streamId, object @event, long? expectedVersion = null)
+    public async Task AppendEvent<TStream>(Guid streamId, IDomainEvent domainEvent, long? expectedVersion = null)
         where TStream : notnull
     {
         var stream = await GetStreamById(streamId);
@@ -33,12 +31,12 @@ internal class EventStore : IEventStore
             throw new InvalidOperationException("Concurrency conflict. Stream has been modified by another process.");
         }
 
-        var eventPayloadJson = JsonSerializer.Serialize(@event, _jsonOptions);
+        var eventPayloadJson = JsonSerializer.Serialize(domainEvent, domainEvent.GetType(), _jsonOptions);
 
         var eventData = new EventData
         {
             Id = Guid.NewGuid(),
-            Type = @event.GetType().AssemblyQualifiedName!,
+            Type = domainEvent.GetType().AssemblyQualifiedName!,
             Payload = eventPayloadJson,
             Created = DateTimeOffset.UtcNow,
             StreamId = streamId,
@@ -50,9 +48,15 @@ internal class EventStore : IEventStore
         _dbContext.Set<EventData>().Add(eventData);
     }
 
-    // todo: cancellationToken, через перегрузки
-    public async Task<T> AggregateStream<T>(Guid streamId, long? atStreamVersion = null, DateTimeOffset? atTimestamp = null, CancellationToken cancellationToken = default)
-        where T : notnull
+    public Task<T> AggregateStream<T>(Guid streamId, CancellationToken cancellationToken)
+        where T : IAggregate
+    {
+        return AggregateStream<T>(streamId, null, null, cancellationToken);
+    }
+
+
+    public async Task<T> AggregateStream<T>(Guid streamId, long? atStreamVersion, DateTimeOffset? atTimestamp, CancellationToken cancellationToken)
+        where T : IAggregate
     {
         var aggregate = (T)Activator.CreateInstance(typeof(T), true)!;
 
@@ -61,14 +65,14 @@ internal class EventStore : IEventStore
 
         foreach (var @event in events)
         {
-            aggregate.InvokeIfExists(When, @event); // todo: сущность должна реализовывать IAggregate, у которого будет метод Apply, который вызывает When. Или тут через рефлексию гонять
-            aggregate.SetIfExists(Version, ++version);
+            aggregate.Apply(@event);
+            aggregate.Version(++version);
         }
 
         return aggregate;
     }
 
-    public async Task<List<object>> GetEvents(Guid streamId, long? atStreamVersion = null, DateTimeOffset? atTimestamp = null)
+    public async Task<List<IDomainEvent>> GetEvents(Guid streamId, long? atStreamVersion = null, DateTimeOffset? atTimestamp = null)
     {
         var events = await _dbContext
             .Set<EventData>()
@@ -78,7 +82,7 @@ internal class EventStore : IEventStore
             .OrderBy(e => e.Version)
             .ToListAsync();
 
-        var deserializedEvents = new List<object>();
+        var deserializedEvents = new List<IDomainEvent>();
 
         foreach (var eventData in events)
         {
@@ -89,7 +93,7 @@ internal class EventStore : IEventStore
                 throw new InvalidOperationException($"Event type {eventData.Type} not found.");
             }
 
-            var eventPayload = JsonSerializer.Deserialize(eventData.Payload, eventType, _jsonOptions);
+            var eventPayload = JsonSerializer.Deserialize(eventData.Payload, eventType, _jsonOptions) as IDomainEvent;
 
             if (eventPayload is not null)
             {

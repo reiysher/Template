@@ -24,7 +24,7 @@ internal sealed class CreateAuthorCommandHandler : ICommandHandler<CreateAuthorC
 
         _repository.Add(author);
 
-        await _unitOfWork.SaveChangesAsync(cancellationToken);
+        await _unitOfWork.Commit(cancellationToken);
 
         return author.Id;
     }

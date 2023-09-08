@@ -20,8 +20,8 @@ internal class CreateSubscriptionCommandHandler : ICommandHandler<CreateSubscrip
     {
         var subscription = Subscription.Create(command.PaymentId, command.PayerId, command.PeriodInMonths);
 
-        await _repository.Save(subscription, cancellationToken);
-        await _unitOfWork.SaveChangesAsync(cancellationToken);
+        await _repository.SaveEvents(subscription, cancellationToken);
+        await _unitOfWork.Commit(cancellationToken);
 
         return subscription.Id.Value;
     }

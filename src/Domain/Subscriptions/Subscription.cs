@@ -3,7 +3,7 @@ using Domain.Subscriptions.Events;
 
 namespace Domain.Subscriptions;
 
-public class Subscription : Entity<SubscriptionId>, IAggregateRoot
+public class Subscription : Entity<SubscriptionId>, IAggregate, IAggregateRoot
 {
     public Guid SubscriberId { get; private set; }
 
@@ -67,9 +67,14 @@ public class Subscription : Entity<SubscriptionId>, IAggregateRoot
         }
     }
 
-    public void Apply(IDomainEvent domainEvent) // todo: protected and load method
+    public void Apply(IDomainEvent domainEvent)
     {
         When((dynamic)domainEvent);
+    }
+
+    public void Version(int version)
+    {
+        // _version = version;
     }
 
     private void When(SubscriptionCreatedDomainEvent domainEvent)
