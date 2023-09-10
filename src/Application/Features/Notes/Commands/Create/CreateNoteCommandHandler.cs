@@ -32,6 +32,6 @@ internal sealed class CreateNoteCommandHandler : ICommandHandler<CreateNoteComma
 
         var note = author.WriteNote(command.Title, command.Content);
         _noteRepository.Add(note);
-        await _unitOfWork.SaveChanges(cancellationToken);
+        await _unitOfWork.CommitAsync(cancellationToken);
     }
 }

@@ -21,6 +21,6 @@ internal sealed class DeleteNotesByAuthorIdCommandHandler : ICommandHandler<Dele
     public async Task Handle(DeleteNotesByAuthorIdCommand command, CancellationToken cancellationToken)
     {
         await _noteService.DeleteByAuthodId(command.AuthorId, cancellationToken);
-        await _unitOfWork.SaveChanges(cancellationToken);
+        await _unitOfWork.CommitAsync(cancellationToken);
     }
 }

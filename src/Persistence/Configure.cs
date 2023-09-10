@@ -50,7 +50,7 @@ public static class Configure
 
         // todo: scrutor
         services.AddScoped<INoteRepository, NoteRepository>();
-        //services.AddScoped<IAuthorRepository, AuthorRepository>();
+        services.AddScoped<IAuthorRepository, AuthorRepository>();
 
         services.AddScoped<IUnitOfWork, UnitOfWork>();
 
@@ -63,7 +63,7 @@ public static class Configure
         services.AddSingleton<IMongoDatabase>(new MongoClient(settings).GetDatabase(mongoSettings.DatabaseName));
 
         services.AddScoped<MongoDbContext>();
-        services.AddScoped<IAuthorRepository, MongoDbAuthorRepository>();
+        //services.AddScoped<IAuthorRepository, MongoDbAuthorRepository>();
 
         // Event Sourcing
 

@@ -1,26 +1,32 @@
 ﻿using Application.Abstractions.Messaging.DomainEvents;
 using Application.Abstractions.Persistence;
 using Domain.Common;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using Persistence.Contexts;
+using System.Data;
+using System.Threading;
 
 namespace Persistence;
 
 internal class UnitOfWork : IUnitOfWork
 {
-    private readonly ApplicationDbContext _context;
+    private IDbContextTransaction? _currentTransaction;
+
+    private readonly ApplicationDbContext _dbContext;
     private readonly IDomainEventDispatcher _dispatcher;
 
     public UnitOfWork(
-        ApplicationDbContext context,
+        ApplicationDbContext dbContext,
         IDomainEventDispatcher dispatcher)
     {
-        _context = context;
+        _dbContext = dbContext;
         _dispatcher = dispatcher;
     }
 
-    public async Task<int> SaveChanges(CancellationToken cancellationToken)
+    public async Task<int> CommitAsync(CancellationToken cancellationToken)
     {
-        var result = await _context.SaveChangesAsync(cancellationToken);
+        var result = await _dbContext.SaveChangesAsync(cancellationToken);
 
         // Если удалить агрегат, то ивенты с него не соберуться.
         // Для интеграции с другими ограниченными контекстами,
@@ -35,7 +41,7 @@ internal class UnitOfWork : IUnitOfWork
 
     private Task SendDomainEventsAsync()
     {
-        var entitiesWithEvents = _context
+        var entitiesWithEvents = _dbContext
             .ChangeTracker
             .Entries<Entity>()
             .Select(e => e.Entity)
