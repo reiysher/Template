@@ -22,6 +22,6 @@ internal class RenewSubscriptionCommandHandler : ICommandHandler<RenewSubscripti
         subscription.Renew(command.PerionInMonths);
 
         await _repository.SaveEvents(subscription, cancellationToken);
-        await _unitOfWork.Commit(cancellationToken);
+        await _unitOfWork.SaveChanges(cancellationToken);
     }
 }

@@ -2,7 +2,7 @@
 
 public interface IUnitOfWork
 {
-    Task<int> Commit(
+    Task<int> SaveChanges(
         CancellationToken cancellationToken = default);
 
     //Task<IDisposable> BeginTransactionAsync(

@@ -29,6 +29,6 @@ internal sealed class DeleteAuthorCommandHandler : ICommandHandler<DeleteAuthorC
         author.Delete();
         _repository.Delete(author);
 
-        await _unitOfWork.Commit(cancellationToken);
+        await _unitOfWork.SaveChanges(cancellationToken);
     }
 }
