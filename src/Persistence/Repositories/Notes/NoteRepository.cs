@@ -1,5 +1,4 @@
-﻿using Domain.Authors;
-using Domain.Notes;
+﻿using Domain.Notes;
 using Domain.Notes.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Persistence.Contexts;

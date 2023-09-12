@@ -18,13 +18,11 @@ try
     builder.EnableLogger();
     builder.ConfigureOptions();
 
-    builder.Services.AddEndpointsApiExplorer();
-    builder.Services.AddSwaggerGen();
-
     builder.Services.AddApplication(builder.Configuration);
     builder.Services.AddInfrastructure(builder.Configuration, Assembly.GetExecutingAssembly());
     builder.Services.AddPersistence(builder.Configuration);
 
+    builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerPreConfigured();
     builder.Services.AddGlobalExceptionHandling();
 
@@ -59,7 +57,6 @@ finally
 }
 
 // todo: pagging result
-// todo: MongoDb taskomask
 // todo: swagger examples
 // todo: polly для всех запросов во внешние системы
 // todo: outbox для интеграции с внешними системами
@@ -68,3 +65,4 @@ finally
 // todo: tests - https://www.youtube.com/watch?v=a6Qab5l-VLo&t=421s
 // todo: ci/cd - https://youtu.be/QP0pi7xe24s
 // todo: TransactionScope
+// todo: CircuitBreaker => ClassifiedAds.Monolith

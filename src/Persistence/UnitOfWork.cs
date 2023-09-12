@@ -1,18 +1,12 @@
 ﻿using Application.Abstractions.Messaging.DomainEvents;
 using Application.Abstractions.Persistence;
 using Domain.Common;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage;
 using Persistence.Contexts;
-using System.Data;
-using System.Threading;
 
 namespace Persistence;
 
 internal class UnitOfWork : IUnitOfWork
 {
-    private IDbContextTransaction? _currentTransaction;
-
     private readonly ApplicationDbContext _dbContext;
     private readonly IDomainEventDispatcher _dispatcher;
 
