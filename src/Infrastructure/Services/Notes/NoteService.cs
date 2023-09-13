@@ -1,6 +1,5 @@
-﻿using Application.Features.Notes.Services;
-using Domain.Authors;
-using Domain.Notes.Repositories;
+﻿using Domain.Notes.Repositories;
+using Domain.Notes.Services;
 
 namespace Infrastructure.Services.Notes;
 

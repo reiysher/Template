@@ -1,6 +1,4 @@
-﻿using Domain.Authors;
-
-namespace Application.Features.Notes.Services;
+﻿namespace Domain.Notes.Services;
 
 public interface INoteService
 {

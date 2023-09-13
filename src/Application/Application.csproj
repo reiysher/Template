@@ -26,7 +26,6 @@
 	<ItemGroup>
 	  <Folder Include="Features\Authors\Builders\" />
 	  <Folder Include="Features\Authors\Factories\" />
-	  <Folder Include="Features\Authors\Services\" />
 	  <Folder Include="Features\Notes\DomainEventHandlers\" />
 	  <Folder Include="Features\Notes\Builders\" />
 	  <Folder Include="Features\Notes\Factories\" />

@@ -1,4 +1,4 @@
-﻿using Application.Features.Notes.Services;
+﻿using Domain.Notes.Services;
 using Infrastructure.Services.Notes;
 using Microsoft.Extensions.DependencyInjection;
 

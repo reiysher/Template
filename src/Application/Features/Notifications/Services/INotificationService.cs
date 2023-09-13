@@ -7,4 +7,5 @@ namespace Application.Features.Notifications.Services;
 /// </summary>
 public interface INotificationService : ITransientService
 {
+    // todo: потом понять куда поместить
 }
