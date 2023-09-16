@@ -1,12 +1,9 @@
-﻿using Ardalis.GuardClauses;
-using Domain.Authors;
-using Domain.Common;
+﻿using Domain.Common;
 using Domain.Notes.Events;
-using Domain.Notes.Guards;
 
 namespace Domain.Notes;
 
-public sealed class Note : Entity<NoteId>, IAggregateRoot
+public sealed class Note : Aggregate<NoteId>, IAggregateRoot
 {
     internal const int TitleMaxLenth = 10;
 

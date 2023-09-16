@@ -18,11 +18,8 @@ internal class SubscriptionRepository : ISubscriptionRepository
         return _eventStore.AggregateStream<Subscription>(subscriptionId, cancellationToken);
     }
 
-    public async Task SaveEvents(Subscription subscription, CancellationToken cancellationToken)
+    public Task SaveEvents(Subscription subscription, CancellationToken cancellationToken)
     {
-        foreach (var domainEvent in subscription.DomainEvents)
-        {
-            await _eventStore.AppendEvent<Subscription>(subscription.Id.Value, domainEvent);
-        }
+        return _eventStore.Store(subscription.Id.Value, subscription, cancellationToken);
     }
 }

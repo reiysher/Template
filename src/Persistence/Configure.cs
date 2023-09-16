@@ -1,7 +1,9 @@
 ﻿using Application.Abstractions.Persistence;
+using Application.Features.Subscriptions.Projections;
 using Application.Features.Subscriptions.Repositories;
 using Domain.Authors.Repositories;
 using Domain.Notes.Repositories;
+using Domain.Subscriptions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -66,8 +68,11 @@ public static class Configure
         //services.AddScoped<IAuthorRepository, MongoDbAuthorRepository>();
 
         // Event Sourcing
+        services.AddEventSourcing(optiond =>
+        {
+            optiond.AddProjection<SubscriptionDashboardProjection, SubscriptionDashboard, Guid>();
+        });
 
-        services.AddScoped<IEventStore, EventStore>();
         services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();
 
         return services;

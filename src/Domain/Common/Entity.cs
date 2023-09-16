@@ -1,27 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿namespace Domain.Common;
 
-namespace Domain.Common;
-
-public abstract class Entity
-{
-    private readonly List<IDomainEvent> _domainEvents = new();
-
-    [NotMapped]
-    public IReadOnlyCollection<IDomainEvent> DomainEvents => _domainEvents.AsReadOnly();
-
-    public void Raise(IDomainEvent eventItem)
-    {
-        _domainEvents.Add(eventItem);
-    }
-
-    public void ClearDomainEvents()
-    {
-        _domainEvents.Clear();
-    }
-}
-
-public abstract class Entity<TId> : Entity, IEquatable<Entity<TId>>
-    where TId : class
+public abstract class Entity<TId> : IEquatable<Entity<TId>>
+    where TId : notnull
 {
     public TId Id { get; protected set; } = default!;
 
@@ -47,7 +27,7 @@ public abstract class Entity<TId> : Entity, IEquatable<Entity<TId>>
             return false;
         }
 
-        return other.Id == Id;
+        return other.Id.Equals(Id);
     }
 
     public override bool Equals(object? obj)
@@ -67,7 +47,7 @@ public abstract class Entity<TId> : Entity, IEquatable<Entity<TId>>
             return false;
         }
 
-        return entity.Id == Id;
+        return entity.Id.Equals(Id);
     }
 
     public override int GetHashCode()

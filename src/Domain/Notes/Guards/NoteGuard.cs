@@ -4,7 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Domain.Notes.Guards;
 
-// todo: other clauses
+// todo: other clauses?
 public static class NoteGuard
 {
     public static Note NoteNotFound(

@@ -13,7 +13,7 @@ internal class DomainEventDispatcher : IDomainEventDispatcher
         _publisher = publisher;
     }
 
-    public async Task Dispatch(IReadOnlyCollection<Entity> entitiesWithEvents)
+    public async Task Dispatch(IReadOnlyCollection<IAggregate> entitiesWithEvents)
     {
         foreach (var entity in entitiesWithEvents)
         {

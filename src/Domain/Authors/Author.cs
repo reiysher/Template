@@ -7,10 +7,8 @@ using Domain.Notes.Guards;
 
 namespace Domain.Authors;
 
-public sealed class Author : Entity, IAggregateRoot
+public sealed class Author : Aggregate<Guid>, IAggregateRoot
 {
-    public Guid Id { get; set; }
-
     public FullName? FullName { get; private set; }
 
     public DateTime BirthDay { get; private set; }
@@ -32,7 +30,7 @@ public sealed class Author : Entity, IAggregateRoot
 
     public static Author Create(string firstName, DateTime birthDay)
     {
-        // todo: guards
+        // todo: guards?
 
         var author = new Author(firstName, birthDay);
         author.Raise(new AuthorCreatedDomainEvent(author.Id));

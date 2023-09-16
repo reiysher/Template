@@ -1,4 +1,6 @@
 ﻿using Application.Common.Behaviors;
+using Application.Features.Subscriptions.Projections;
+using Domain.Common;
 using FluentValidation;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

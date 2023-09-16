@@ -37,7 +37,7 @@ internal class UnitOfWork : IUnitOfWork
     {
         var entitiesWithEvents = _dbContext
             .ChangeTracker
-            .Entries<Entity>()
+            .Entries<IAggregate>()
             .Select(e => e.Entity)
             .Where(e => e.DomainEvents.Any())
             .ToArray();

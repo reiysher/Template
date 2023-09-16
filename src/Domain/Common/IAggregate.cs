@@ -2,7 +2,11 @@
 
 public interface IAggregate
 {
-    void Apply(IDomainEvent domainEvent);
+    int Version { get; set; }
 
-    void Version(int version);
+    IReadOnlyCollection<IDomainEvent> DomainEvents { get; }
+
+    void ClearDomainEvents();
+
+    void Apply(IDomainEvent domainEvent);
 }

@@ -10,9 +10,13 @@ internal class EventStore : IEventStore
     private readonly ApplicationDbContext _dbContext;
     private readonly JsonSerializerOptions _jsonOptions;
 
-    public EventStore(ApplicationDbContext dbContext)
+    private readonly IEnumerable<IProjectionSource> _projectionSources;
+
+    public EventStore(ApplicationDbContext dbContext, IEnumerable<IProjectionSource> projections)
     {
         _dbContext = dbContext;
+        _projectionSources = projections;
+
         _jsonOptions = new JsonSerializerOptions
         {
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
@@ -20,15 +24,38 @@ internal class EventStore : IEventStore
         };
     }
 
-    public async Task AppendEvent<TStream>(Guid streamId, IDomainEvent domainEvent, long? expectedVersion = null)
+    public async Task<bool> Store<TStream>(Guid streamId, TStream aggregate, CancellationToken cancellationToken)
+        where TStream : IAggregate
+    {
+        var domainEvents = aggregate.DomainEvents;
+        var initialVersion = aggregate.Version - domainEvents.Count;
+
+        foreach (var domainEvent in domainEvents)
+        {
+            await AppendEvent<TStream>(streamId, domainEvent, initialVersion++, cancellationToken);
+
+            foreach (var projectionSource in _projectionSources.Where(ps => ps.HasHandler(domainEvent.GetType())))
+            {
+                await projectionSource.HandleAsync(domainEvent, cancellationToken);
+            }
+        }
+
+        //snapshots
+        //    .FirstOrDefault(snapshot => snapshot.Handles == typeof(TStream))?
+        //    .Handle(aggregate);
+
+        return true;
+    }
+
+    public async Task AppendEvent<TStream>(Guid streamId, IDomainEvent domainEvent, long? expectedVersion = null, CancellationToken cancellationToken = default)
         where TStream : notnull
     {
-        var stream = await GetStreamById(streamId);
+        var stream = await GetStreamById(streamId, cancellationToken);
         stream ??= CreateStream(streamId, typeof(TStream).AssemblyQualifiedName!);
 
         if (expectedVersion.HasValue && stream.Version != expectedVersion)
         {
-            throw new InvalidOperationException("Concurrency conflict. Stream has been modified by another process.");
+            throw new EventStoreConcurrencyException(streamId);
         }
 
         var eventPayloadJson = JsonSerializer.Serialize(domainEvent, domainEvent.GetType(), _jsonOptions);
@@ -60,19 +87,19 @@ internal class EventStore : IEventStore
     {
         var aggregate = (T)Activator.CreateInstance(typeof(T), true)!;
 
-        var events = await GetEvents(streamId, atStreamVersion, atTimestamp);
+        var events = await GetEvents(streamId, atStreamVersion, atTimestamp, cancellationToken);
         var version = 0;
 
         foreach (var @event in events)
         {
             aggregate.Apply(@event);
-            aggregate.Version(++version);
+            aggregate.Version = ++version;
         }
 
         return aggregate;
     }
 
-    public async Task<List<IDomainEvent>> GetEvents(Guid streamId, long? atStreamVersion = null, DateTimeOffset? atTimestamp = null)
+    public async Task<List<IDomainEvent>> GetEvents(Guid streamId, long? atStreamVersion = null, DateTimeOffset? atTimestamp = null, CancellationToken cancellationToken = default)
     {
         var events = await _dbContext
             .Set<EventData>()
@@ -80,7 +107,7 @@ internal class EventStore : IEventStore
             .Where(e => !atStreamVersion.HasValue || e.Version <= atStreamVersion)
             .Where(e => !atTimestamp.HasValue || e.Created <= atTimestamp)
             .OrderBy(e => e.Version)
-            .ToListAsync();
+            .ToListAsync(cancellationToken);
 
         var deserializedEvents = new List<IDomainEvent>();
 
@@ -104,9 +131,9 @@ internal class EventStore : IEventStore
         return deserializedEvents;
     }
 
-    public async Task<IEnumerable<EventStream>> GetAllStreams()
+    public async Task<IEnumerable<EventStream>> GetAllStreams(CancellationToken cancellationToken)
     {
-        return await _dbContext.Set<EventStream>().Include(s => s.Events).ToListAsync();
+        return await _dbContext.Set<EventStream>().Include(s => s.Events).ToListAsync(cancellationToken);
     }
 
     public EventStream CreateStream(Guid streamId, string streamName)
@@ -123,8 +150,8 @@ internal class EventStore : IEventStore
         return stream;
     }
 
-    private async Task<EventStream?> GetStreamById(Guid streamId)
+    private async Task<EventStream?> GetStreamById(Guid streamId, CancellationToken cancellationToken)
     {
-        return await _dbContext.Set<EventStream>().FirstOrDefaultAsync(s => s.Id == streamId);
+        return await _dbContext.Set<EventStream>().FirstOrDefaultAsync(s => s.Id == streamId, cancellationToken);
     }
 }
