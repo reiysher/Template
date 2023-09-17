@@ -68,9 +68,9 @@ public static class Configure
         //services.AddScoped<IAuthorRepository, MongoDbAuthorRepository>();
 
         // Event Sourcing
-        services.AddEventSourcing(optiond =>
+        services.AddEventSourcing(options =>
         {
-            optiond.AddProjection<SubscriptionDashboardProjection, SubscriptionDashboard, Guid>();
+            options.AddProjection<SubscriptionDashboardProjection, SubscriptionDashboard, Guid>();
         });
 
         services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();
