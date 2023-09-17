@@ -1,6 +1,26 @@
-﻿namespace Domain.Common;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
-public abstract class Entity<TId> : IEquatable<Entity<TId>>
+namespace Domain.Common;
+
+public abstract class Entity
+{
+    private readonly List<IDomainEvent> _domainEvents = new();
+
+    [NotMapped]
+    public IReadOnlyCollection<IDomainEvent> DomainEvents => _domainEvents.AsReadOnly();
+
+    public void Raise(IDomainEvent eventItem)
+    {
+        _domainEvents.Add(eventItem);
+    }
+
+    public void ClearDomainEvents()
+    {
+        _domainEvents.Clear();
+    }
+}
+
+public abstract class Entity<TId> : Entity, IEquatable<Entity<TId>>
     where TId : notnull
 {
     public TId Id { get; protected set; } = default!;

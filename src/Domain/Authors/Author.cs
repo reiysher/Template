@@ -7,7 +7,7 @@ using Domain.Notes.Guards;
 
 namespace Domain.Authors;
 
-public sealed class Author : Aggregate<Guid>, IAggregateRoot
+public sealed class Author : Entity<Guid>, IAggregateRoot
 {
     public FullName? FullName { get; private set; }
 

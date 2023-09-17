@@ -6,5 +6,5 @@ namespace Application.Abstractions.Messaging.DomainEvents;
 // todo: scrutor
 public interface IDomainEventDispatcher : ITransientService
 {
-    Task Dispatch(IReadOnlyCollection<IAggregate> entitiesWithEvents);
+    Task Dispatch(IReadOnlyCollection<Entity> entitiesWithEvents);
 }

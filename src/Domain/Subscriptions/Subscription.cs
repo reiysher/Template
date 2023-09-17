@@ -3,7 +3,7 @@ using Domain.Subscriptions.Events;
 
 namespace Domain.Subscriptions;
 
-public class Subscription : Aggregate<SubscriptionId>, IAggregateRoot
+public class Subscription : Entity<SubscriptionId>, IAggregate, IAggregateRoot
 {
     public Guid SubscriberId { get; private set; }
 
@@ -14,6 +14,8 @@ public class Subscription : Aggregate<SubscriptionId>, IAggregateRoot
     public DateTimeOffset ExpirationDate { get; private set; }
 
     public bool IsActive { get; private set; } // todo: use SubscriptionStatus (enum or enumeration)
+
+    public int Version { get; set; }
 
     private Subscription()
     {
@@ -37,6 +39,7 @@ public class Subscription : Aggregate<SubscriptionId>, IAggregateRoot
 
         subscription.Apply(domainEvent);
         subscription.Raise(domainEvent);
+        subscription.Version++;
 
         return subscription;
     }
@@ -53,6 +56,7 @@ public class Subscription : Aggregate<SubscriptionId>, IAggregateRoot
 
         Apply(domainEvent);
         Raise(domainEvent);
+        Version++;
     }
 
     public void Expire()
@@ -63,10 +67,11 @@ public class Subscription : Aggregate<SubscriptionId>, IAggregateRoot
 
             Apply(domainEvent);
             Raise(domainEvent);
+            Version++;
         }
     }
 
-    public override void Apply(IDomainEvent domainEvent)
+    public void Apply(IDomainEvent domainEvent)
     {
         When((dynamic)domainEvent);
     }
