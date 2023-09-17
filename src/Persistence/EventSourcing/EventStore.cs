@@ -40,10 +40,6 @@ internal class EventStore : IEventStore
             }
         }
 
-        //snapshots
-        //    .FirstOrDefault(snapshot => snapshot.Handles == typeof(TStream))?
-        //    .Handle(aggregate);
-
         return true;
     }
 
