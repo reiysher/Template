@@ -13,13 +13,13 @@ internal class DomainEventDispatcher : IDomainEventDispatcher
         _publisher = publisher;
     }
 
-    public async Task Dispatch(IReadOnlyCollection<Entity> entitiesWithEvents)
+    public async Task Dispatch(IReadOnlyCollection<IAggregate> aggregatesWithEvents)
     {
-        foreach (var entity in entitiesWithEvents)
+        foreach (var aggregate in aggregatesWithEvents)
         {
-            var domainEvents = entity.DomainEvents.ToArray();
+            var domainEvents = aggregate.DomainEvents.ToArray();
 
-            entity.ClearDomainEvents();
+            aggregate.ClearDomainEvents();
 
             foreach (var domainEvent in domainEvents)
             {

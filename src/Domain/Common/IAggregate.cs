@@ -6,5 +6,7 @@ public interface IAggregate
 
     IReadOnlyCollection<IDomainEvent> DomainEvents { get; }
 
+    void ClearDomainEvents();
+
     void Apply(IDomainEvent domainEvent);
 }

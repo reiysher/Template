@@ -35,13 +35,13 @@ internal class UnitOfWork : IUnitOfWork
 
     private Task SendDomainEventsAsync()
     {
-        var entitiesWithEvents = _dbContext
+        var aggregatesWithEvents = _dbContext
             .ChangeTracker
-            .Entries<Entity>()
+            .Entries<IAggregate>()
             .Select(e => e.Entity)
             .Where(e => e.DomainEvents.Any())
             .ToArray();
 
-        return _dispatcher.Dispatch(entitiesWithEvents);
+        return _dispatcher.Dispatch(aggregatesWithEvents);
     }
 }

@@ -3,7 +3,7 @@ using Domain.Notes.Events;
 
 namespace Domain.Notes;
 
-public sealed class Note : Entity<NoteId>, IAggregateRoot
+public sealed class Note : Aggregate<NoteId>, IAggregateRoot
 {
     internal const int TitleMaxLenth = 10;
 
