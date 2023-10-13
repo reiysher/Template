@@ -3,7 +3,7 @@ using Domain.Subscriptions.Events;
 
 namespace Domain.Subscriptions;
 
-public class Subscription : Aggregate<SubscriptionId>, IAggregate, IAggregateRoot
+public class Subscription : Aggregate<SubscriptionId>
 {
     public Guid SubscriberId { get; private set; }
 
@@ -66,7 +66,7 @@ public class Subscription : Aggregate<SubscriptionId>, IAggregate, IAggregateRoo
         }
     }
 
-    public void Apply(IDomainEvent domainEvent)
+    public override void Apply(IDomainEvent domainEvent)
     {
         When((dynamic)domainEvent);
     }

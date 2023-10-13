@@ -91,4 +91,6 @@ public static class Configure
 
         await services.InitializeMongoDb();
     }
+
+    // todo: Поместить в инфраструктуру
 }

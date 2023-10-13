@@ -1,6 +1,6 @@
 ﻿namespace Domain.Common;
 
-public interface IAggregate
+public interface IAggregate : IAggregateRoot
 {
     int Version { get; set; }
 

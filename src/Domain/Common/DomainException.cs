@@ -1,6 +1,6 @@
 ﻿namespace Domain.Common;
 
-public abstract class DomainException : ApplicationException
+public abstract class DomainException : Exception
 {
     protected DomainException()
     {

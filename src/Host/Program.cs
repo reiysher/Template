@@ -66,3 +66,4 @@ finally
 // todo: ci/cd - https://youtu.be/QP0pi7xe24s
 // todo: TransactionScope
 // todo: CircuitBreaker => ClassifiedAds.Monolith
+// todo: executingContext - scoped service with permissions, userId etc. cross cutting concerns https://habr.com/ru/articles/353258/
