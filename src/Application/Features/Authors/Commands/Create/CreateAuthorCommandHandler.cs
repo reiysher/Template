@@ -5,7 +5,7 @@ using Domain.Authors.Repositories;
 
 namespace Application.Features.Authors.Commands.Create;
 
-internal sealed class CreateAuthorCommandHandler : ICommandHandler<CreateAuthorCommand, Guid>
+public sealed class CreateAuthorCommandHandler : ICommandHandler<CreateAuthorCommand, Guid>
 {
     private readonly IAuthorRepository _repository;
     private readonly IUnitOfWork _unitOfWork;

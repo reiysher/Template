@@ -24,10 +24,12 @@ public sealed class Note : Aggregate<NoteId>, IAggregateRoot
         AuthorId = authorId;
         Title = title;
         Content = content;
+
+        AddDomainEvent(new NoteCreatedDomainEvent(authorId, Id));
     }
 
     public void Delete()
     {
-        Raise(new NoteDeletedDomainEvent(Id));
+        AddDomainEvent(new NoteDeletedDomainEvent(Id));
     }
 }

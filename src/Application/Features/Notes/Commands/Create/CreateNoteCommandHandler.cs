@@ -1,14 +1,13 @@
 ﻿using Application.Abstractions.Messaging.Commands;
 using Application.Abstractions.Persistence;
 using Ardalis.GuardClauses;
-using Domain.Authors;
 using Domain.Authors.Guards;
 using Domain.Authors.Repositories;
 using Domain.Notes.Repositories;
 
 namespace Application.Features.Notes.Commands.Create;
 
-internal sealed class CreateNoteCommandHandler : ICommandHandler<CreateNoteCommand>
+public sealed class CreateNoteCommandHandler : ICommandHandler<CreateNoteCommand>
 {
     private readonly INoteRepository _noteRepository;
     private readonly IAuthorRepository _authorRepository;

@@ -26,6 +26,8 @@ public sealed class Author : Aggregate<Guid>, IAggregateRoot
         FullName = new FullName(firstName, String.Empty, String.Empty);
         BirthDay = birthDay;
         Created = DateTime.UtcNow;
+
+        AddDomainEvent(new AuthorCreatedDomainEvent(Id));
     }
 
     public static Author Create(string firstName, DateTime birthDay)
@@ -33,14 +35,14 @@ public sealed class Author : Aggregate<Guid>, IAggregateRoot
         // todo: guards?
 
         var author = new Author(firstName, birthDay);
-        author.Raise(new AuthorCreatedDomainEvent(author.Id));
+        
 
         return author;
     }
 
     public void Delete()
     {
-        Raise(new AuthorDeletedDomainEvent(Id));
+        AddDomainEvent(new AuthorDeletedDomainEvent(Id));
     }
 
     public string GetFullName()
@@ -55,7 +57,6 @@ public sealed class Author : Aggregate<Guid>, IAggregateRoot
         Guard.Against.TitleTooLong(title, Note.TitleMaxLenth);
 
         var note = new Note(Id, title, content);
-        note.Raise(new NoteCreatedDomainEvent(Id, note.Id));
 
         return note;
     }

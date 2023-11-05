@@ -17,13 +17,11 @@ public class Subscription : Aggregate<SubscriptionId>
 
     private Subscription()
     {
-        // for ef core
+        // for ORM
     }
 
-    public static Subscription Create(Guid paymentId, Guid payerId, int periodInMonths)
+    public Subscription(Guid paymentId, Guid payerId, int periodInMonths)
     {
-        var subscription = new Subscription();
-
         var startDate = DateTimeOffset.UtcNow;
         var expirationDate = startDate.AddMonths(periodInMonths);
 
@@ -35,10 +33,8 @@ public class Subscription : Aggregate<SubscriptionId>
             startDate,
             expirationDate);
 
-        subscription.Apply(domainEvent);
-        subscription.Raise(domainEvent);
-
-        return subscription;
+        Apply(domainEvent);
+        AddDomainEvent(domainEvent);
     }
 
     public void Renew(int perionInMonths)
@@ -52,7 +48,7 @@ public class Subscription : Aggregate<SubscriptionId>
             expirationDate);
 
         Apply(domainEvent);
-        Raise(domainEvent);
+        AddDomainEvent(domainEvent);
     }
 
     public void Expire()
@@ -62,7 +58,7 @@ public class Subscription : Aggregate<SubscriptionId>
             var domainEvent = new SubscriptionExpiredDomainEvent(Id.Value);
 
             Apply(domainEvent);
-            Raise(domainEvent);
+            AddDomainEvent(domainEvent);
         }
     }
 

@@ -18,7 +18,7 @@ internal class CreateSubscriptionCommandHandler : ICommandHandler<CreateSubscrip
 
     public async Task<Guid> Handle(CreateSubscriptionCommand command, CancellationToken cancellationToken)
     {
-        var subscription = Subscription.Create(command.PaymentId, command.PayerId, command.PeriodInMonths);
+        var subscription = new Subscription(command.PaymentId, command.PayerId, command.PeriodInMonths);
 
         await _repository.SaveEvents(subscription, cancellationToken);
         await _unitOfWork.CommitAsync(cancellationToken);

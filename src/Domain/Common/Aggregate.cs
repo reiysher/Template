@@ -12,7 +12,7 @@ public abstract class Aggregate<TId> : Entity<TId>, IAggregate
 
     public int Version { get; set; } // todo: подумать как убрать сеттер
 
-    public void Raise(IDomainEvent eventItem) // todo: public?
+    protected void AddDomainEvent(IDomainEvent eventItem) // todo: public?
     {
         _domainEvents.Add(eventItem);
         Version++;
