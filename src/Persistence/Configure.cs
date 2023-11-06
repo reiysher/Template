@@ -45,7 +45,6 @@ public static class Configure
             options.UseNpgsql(settings.PostgreSql.ConnectionString, builder =>
             {
                 builder.CommandTimeout(settings.PostgreSql.CommandTimeoutInSeconds);
-                builder.EnableRetryOnFailure();
                 builder.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName);
                 builder.MigrationsHistoryTable(DbConstants.MigrationsHistory);
             });
