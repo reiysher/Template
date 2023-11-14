@@ -5,14 +5,9 @@ using Persistence.Contexts;
 
 namespace Persistence.Repositories.Authors;
 
-internal class AuthorRepository : IAuthorRepository
+internal class AuthorRepository(ApplicationDbContext context) : IAuthorRepository
 {
-    private readonly ApplicationDbContext _context;
-
-    public AuthorRepository(ApplicationDbContext context)
-    {
-        _context = context;
-    }
+    private readonly ApplicationDbContext _context = context;
 
     public Task<Author?> GetById(Guid authorId, CancellationToken cancellationToken)
     {
