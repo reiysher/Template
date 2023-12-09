@@ -53,12 +53,12 @@ internal static class SubscriptionEndpoints
 
 
     public static async Task<IResult> Renew(
-            [FromBody] RenewSubscriptionCommand request, // todo: использовать запрос вместо команды
+            [FromBody] RenewSubscriptionRequest request,
             [FromServices] ISender sender,
             CancellationToken cancellationToken)
     {
-        //var command = new CreateAuthorCommand(CreateSubscriptionCommand.FirstName, request.BirthDay);
-        await sender.Send(request, cancellationToken);
+        var command = new RenewSubscriptionCommand(request.SubscriptionId, request.PerionInMonths);
+        await sender.Send(command, cancellationToken);
 
         return Results.Ok();
     }
