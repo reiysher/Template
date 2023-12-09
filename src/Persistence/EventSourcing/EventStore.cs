@@ -8,13 +8,15 @@ namespace Persistence.EventSourcing;
 internal class EventStore : IEventStore
 {
     private readonly ApplicationDbContext _dbContext;
+    private readonly TimeProvider _timeProvider;
     private readonly JsonSerializerOptions _jsonOptions;
 
     private readonly IEnumerable<IProjectionSource> _projectionSources;
 
-    public EventStore(ApplicationDbContext dbContext, IEnumerable<IProjectionSource> projections)
+    public EventStore(ApplicationDbContext dbContext, TimeProvider timeProvider, IEnumerable<IProjectionSource> projections)
     {
         _dbContext = dbContext;
+        _timeProvider = timeProvider;
         _projectionSources = projections;
 
         _jsonOptions = new JsonSerializerOptions
@@ -61,7 +63,7 @@ internal class EventStore : IEventStore
             Id = Guid.NewGuid(),
             Type = domainEvent.GetType().AssemblyQualifiedName!,
             Payload = eventPayloadJson,
-            Created = DateTimeOffset.UtcNow,
+            Created = _timeProvider.GetUtcNow(),
             StreamId = streamId,
             Version = stream.Version + 1
         };

@@ -4,22 +4,21 @@ using Application.Features.Subscriptions.Repositories;
 
 namespace Application.Features.Subscriptions.Commands.Renew;
 
-internal class RenewSubscriptionCommandHandler : ICommandHandler<RenewSubscriptionCommand>
+internal class RenewSubscriptionCommandHandler(
+    IUnitOfWork unitOfWork,
+    ISubscriptionRepository repository,
+    TimeProvider timeProvider)
+    : ICommandHandler<RenewSubscriptionCommand>
 {
-    private readonly IUnitOfWork _unitOfWork;
-    private readonly ISubscriptionRepository _repository;
-
-    public RenewSubscriptionCommandHandler(IUnitOfWork unitOfWork, ISubscriptionRepository repository)
-    {
-        _unitOfWork = unitOfWork;
-        _repository = repository;
-    }
+    private readonly IUnitOfWork _unitOfWork = unitOfWork;
+    private readonly ISubscriptionRepository _repository = repository;
+    private readonly TimeProvider _timeProvider = timeProvider;
 
     public async Task Handle(RenewSubscriptionCommand command, CancellationToken cancellationToken)
     {
         var subscription = await _repository.GetById(command.SubscriptionId, cancellationToken);
 
-        subscription.Renew(command.PerionInMonths);
+        subscription.Renew(command.PerionInMonths, _timeProvider.GetUtcNow());
 
         await _repository.SaveEvents(subscription, cancellationToken);
         await _unitOfWork.CommitAsync(cancellationToken);

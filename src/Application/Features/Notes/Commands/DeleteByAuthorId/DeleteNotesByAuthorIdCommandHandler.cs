@@ -5,7 +5,7 @@ using Domain.Notes.Services;
 
 namespace Application.Features.Notes.Commands.DeleteByAuthorId;
 
-internal sealed class DeleteNotesByAuthorIdCommandHandler : ICommandHandler<DeleteNotesByAuthorIdCommand>
+internal class DeleteNotesByAuthorIdCommandHandler : ICommandHandler<DeleteNotesByAuthorIdCommand>
 {
     private readonly INoteService _noteService;
     private readonly IUnitOfWork _unitOfWork;

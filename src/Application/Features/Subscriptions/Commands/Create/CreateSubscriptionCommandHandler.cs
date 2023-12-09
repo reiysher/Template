@@ -5,20 +5,19 @@ using Domain.Subscriptions;
 
 namespace Application.Features.Subscriptions.Commands.Create;
 
-internal class CreateSubscriptionCommandHandler : ICommandHandler<CreateSubscriptionCommand, Guid>
+internal class CreateSubscriptionCommandHandler(
+    IUnitOfWork unitOfWork,
+    ISubscriptionRepository repository,
+    TimeProvider timeProvider)
+    : ICommandHandler<CreateSubscriptionCommand, Guid>
 {
-    private readonly IUnitOfWork _unitOfWork;
-    private readonly ISubscriptionRepository _repository;
-
-    public CreateSubscriptionCommandHandler(IUnitOfWork unitOfWork, ISubscriptionRepository repository)
-    {
-        _unitOfWork = unitOfWork;
-        _repository = repository;
-    }
+    private readonly IUnitOfWork _unitOfWork = unitOfWork;
+    private readonly ISubscriptionRepository _repository = repository;
+    private readonly TimeProvider _timeProvider = timeProvider;
 
     public async Task<Guid> Handle(CreateSubscriptionCommand command, CancellationToken cancellationToken)
     {
-        var subscription = new Subscription(command.PaymentId, command.PayerId, command.PeriodInMonths);
+        var subscription = new Subscription(command.PaymentId, command.PayerId, command.PeriodInMonths, _timeProvider.GetUtcNow());
 
         await _repository.SaveEvents(subscription, cancellationToken);
         await _unitOfWork.CommitAsync(cancellationToken);

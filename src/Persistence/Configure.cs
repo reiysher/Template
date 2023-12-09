@@ -19,9 +19,6 @@ using Persistence.Repositories.Authors;
 using Persistence.Repositories.Notes;
 using Persistence.Repositories.Subscriptions;
 using Persistence.Settings;
-using System.Runtime.CompilerServices;
-
-[assembly: InternalsVisibleTo("IntegrationTests")] // todo: советуют убрать
 
 namespace Persistence;
 

@@ -20,9 +20,8 @@ public class Subscription : Aggregate<SubscriptionId>
         // for ORM
     }
 
-    public Subscription(Guid paymentId, Guid payerId, int periodInMonths)
+    public Subscription(Guid paymentId, Guid payerId, int periodInMonths, DateTimeOffset startDate)
     {
-        var startDate = DateTimeOffset.UtcNow;
         var expirationDate = startDate.AddMonths(periodInMonths);
 
         var domainEvent = new SubscriptionCreatedDomainEvent(
@@ -37,10 +36,10 @@ public class Subscription : Aggregate<SubscriptionId>
         AddDomainEvent(domainEvent);
     }
 
-    public void Renew(int perionInMonths)
+    public void Renew(int perionInMonths, DateTimeOffset utcNow)
     {
-        var expirationDate = ExpirationDate < DateTimeOffset.UtcNow
-            ? DateTimeOffset.UtcNow.AddMonths(perionInMonths)
+        var expirationDate = ExpirationDate < utcNow
+            ? utcNow.AddMonths(perionInMonths)
             : ExpirationDate.AddMonths(perionInMonths);
 
         var domainEvent = new SubscriptionRenewedDomainEvent(
@@ -51,9 +50,9 @@ public class Subscription : Aggregate<SubscriptionId>
         AddDomainEvent(domainEvent);
     }
 
-    public void Expire()
+    public void Expire(DateTimeOffset utcNow)
     {
-        if (ExpirationDate < DateTimeOffset.UtcNow)
+        if (ExpirationDate < utcNow)
         {
             var domainEvent = new SubscriptionExpiredDomainEvent(Id.Value);
 

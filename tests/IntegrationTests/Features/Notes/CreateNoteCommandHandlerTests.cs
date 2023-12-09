@@ -3,22 +3,20 @@ using Application.Features.Notes.Commands.Create;
 using Domain.Authors.Repositories;
 using Domain.Notes.Exceptions;
 using Domain.Notes.Repositories;
-using FluentAssertions;
-using Moq;
 
-namespace Tests.Notes.Commands;
+namespace IntegrationTests.Features.Notes;
 
 public class CreateNoteCommandHandlerTests
 {
-    private readonly Mock<INoteRepository> _noteRepository;
-    private readonly Mock<IAuthorRepository> _authorRepository;
-    private readonly Mock<IUnitOfWork> _unitOfWork;
+    private readonly INoteRepository _noteRepository;
+    private readonly IAuthorRepository _authorRepository;
+    private readonly IUnitOfWork _unitOfWork;
 
     public CreateNoteCommandHandlerTests()
     {
-        _noteRepository = new();
-        _authorRepository = new();
-        _unitOfWork = new();
+        _noteRepository = Substitute.For<INoteRepository>();
+        _authorRepository = Substitute.For<IAuthorRepository>();
+        _unitOfWork = Substitute.For<IUnitOfWork>();
     }
 
     [Fact]
@@ -31,9 +29,9 @@ public class CreateNoteCommandHandlerTests
             "Some content");
 
         var handler = new CreateNoteCommandHandler(
-            _noteRepository.Object,
-            _authorRepository.Object,
-            _unitOfWork.Object);
+            _noteRepository,
+            _authorRepository,
+            _unitOfWork);
 
         // act
         var action = () => handler.Handle(command, default);

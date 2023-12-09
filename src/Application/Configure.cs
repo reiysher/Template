@@ -1,13 +1,8 @@
 ﻿using Application.Common.Behaviors;
-using Application.Features.Subscriptions.Projections;
-using Domain.Common;
 using FluentValidation;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
-using System.Runtime.CompilerServices;
-
-[assembly: InternalsVisibleTo("Tests")] // todo: советуют убрать
 
 namespace Application;
 
@@ -25,6 +20,9 @@ public static class Configure
 
         services
             .AddValidatorsFromAssembly(assembly);
+
+        services
+            .AddSingleton(TimeProvider.System);
 
         return services;
     }

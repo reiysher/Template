@@ -1,13 +1,12 @@
 ﻿using Application.Abstractions.Messaging.Commands;
 using Application.Abstractions.Persistence;
 using Ardalis.GuardClauses;
-using Domain.Authors;
 using Domain.Authors.Guards;
 using Domain.Authors.Repositories;
 
 namespace Application.Features.Authors.Commands.Delete;
 
-internal sealed class DeleteAuthorCommandHandler : ICommandHandler<DeleteAuthorCommand>
+internal class DeleteAuthorCommandHandler : ICommandHandler<DeleteAuthorCommand>
 {
     private readonly IAuthorRepository _repository;
     private readonly IUnitOfWork _unitOfWork;

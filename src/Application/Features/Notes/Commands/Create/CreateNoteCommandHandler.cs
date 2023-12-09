@@ -7,7 +7,7 @@ using Domain.Notes.Repositories;
 
 namespace Application.Features.Notes.Commands.Create;
 
-public sealed class CreateNoteCommandHandler : ICommandHandler<CreateNoteCommand>
+internal class CreateNoteCommandHandler : ICommandHandler<CreateNoteCommand>
 {
     private readonly INoteRepository _noteRepository;
     private readonly IAuthorRepository _authorRepository;

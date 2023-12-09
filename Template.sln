@@ -17,11 +17,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infrastructure", "src\Infra
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Persistence", "src\Persistence\Persistence.csproj", "{796B8E9E-3758-4115-ABD9-22AC42650277}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests", "tests\Tests\Tests.csproj", "{5D58F348-5A4A-49CE-9C27-833029619B4E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTests", "tests\UnitTests\UnitTests.csproj", "{5D58F348-5A4A-49CE-9C27-833029619B4E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Messaging", "src\Messaging\Messaging.csproj", "{AF4AE346-047F-4E8B-AC1E-24975AA1AEB4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IntegrationTests", "tests\IntegrationTests\IntegrationTests.csproj", "{41625954-52BC-4A37-AE9B-097020EE7854}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IntegrationTests", "tests\IntegrationTests\IntegrationTests.csproj", "{41625954-52BC-4A37-AE9B-097020EE7854}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
