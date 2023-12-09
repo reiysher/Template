@@ -22,7 +22,7 @@ public sealed class CreateAuthorCommandHandler : ICommandHandler<CreateAuthorCom
     {
         var author = Author.Create(command.FirstName, command.BirthDay);
 
-        _repository.Add(author);
+        _repository.Insert(author);
 
         await _unitOfWork.CommitAsync(cancellationToken);
 

@@ -9,7 +9,7 @@ public interface INoteRepository : IRepository<Note>
 
     Task<IReadOnlyCollection<Note>> GetByAuthorId(Guid authorId, CancellationToken cancellationToken);
 
-    void Add(Note note);
+    void Insert(Note note);
 
     void Delete(Note note);
 }

@@ -6,7 +6,7 @@ public interface IAuthorRepository : IRepository<Author>
 {
     Task<Author> GetById(Guid authorId, CancellationToken cancellationToken);
 
-    void Add(Author author);
+    void Insert(Author author);
 
     void Delete(Author author);
 }

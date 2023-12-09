@@ -15,7 +15,7 @@ internal class AuthorRepository(ApplicationDbContext context) : IAuthorRepositor
         return _context.Set<Author>().SingleOrDefaultAsync(author => author.Id == authorId, cancellationToken);
     }
 
-    public void Add(Author author)
+    public void Insert(Author author)
     {
         _context.Set<Author>().Add(author);
     }

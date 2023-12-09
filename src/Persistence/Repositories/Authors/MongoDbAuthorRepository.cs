@@ -15,7 +15,7 @@ internal class MongoDbAuthorRepository : IAuthorRepository
         _dbContext = Guard.Against.Null(dbContext, nameof(dbContext));
     }
 
-    public void Add(Author author)
+    public void Insert(Author author)
     {
         _dbContext.Authors.InsertOne(author);
     }

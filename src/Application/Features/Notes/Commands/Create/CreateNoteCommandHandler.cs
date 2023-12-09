@@ -30,7 +30,7 @@ public sealed class CreateNoteCommandHandler : ICommandHandler<CreateNoteCommand
         Guard.Against.AuthorNotFound(author, command.AuthorId);
 
         var note = author.WriteNote(command.Title, command.Content);
-        _noteRepository.Add(note);
+        _noteRepository.Insert(note);
         await _unitOfWork.CommitAsync(cancellationToken);
     }
 }

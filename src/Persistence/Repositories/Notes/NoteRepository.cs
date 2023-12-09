@@ -33,7 +33,7 @@ internal class NoteRepository : INoteRepository
             .ToListAsync(cancellationToken);
     }
 
-    public void Add(Note note)
+    public void Insert(Note note)
     {
         _context.Set<Note>().Add(note);
     }
