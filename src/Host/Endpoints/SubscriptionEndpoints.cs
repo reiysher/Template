@@ -1,5 +1,6 @@
 ﻿using Application.Features.Subscriptions.Commands.Create;
 using Application.Features.Subscriptions.Commands.Renew;
+using Application.Features.Subscriptions.Models.Requests;
 using Application.Features.Subscriptions.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -40,12 +41,12 @@ internal static class SubscriptionEndpoints
 
 
     public static async Task<IResult> Create(
-            [FromBody] CreateSubscriptionCommand request, // todo: использовать запрос вместо команды
+            [FromBody] CreateSubscriptionRequest request,
             [FromServices] ISender sender,
             CancellationToken cancellationToken)
     {
-        //var command = new CreateAuthorCommand(CreateSubscriptionCommand.FirstName, request.BirthDay);
-        var result = await sender.Send(request, cancellationToken);
+        var command = new CreateSubscriptionCommand(request.PaymentId, request.PayerId, request.PeriodInMonths);
+        var result = await sender.Send(command, cancellationToken);
 
         return Results.Ok(result);
     }
