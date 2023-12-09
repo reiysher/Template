@@ -5,7 +5,7 @@ using Host.OpenApi;
 using Host.Options;
 using Infrastructure;
 using Infrastructure.Logging;
-using Persistence;
+using Infrastructure.Persistence;
 using Serilog;
 using System.Reflection;
 
@@ -20,7 +20,6 @@ try
 
     builder.Services.AddApplication(builder.Configuration);
     builder.Services.AddInfrastructure(builder.Configuration, Assembly.GetExecutingAssembly());
-    builder.Services.AddPersistence(builder.Configuration);
 
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerPreConfigured();

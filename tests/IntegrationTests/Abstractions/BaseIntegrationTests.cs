@@ -1,5 +1,5 @@
-﻿using IntegrationTests.Utils.SQLite;
-using Persistence.Contexts;
+﻿using Infrastructure.Persistence.Contexts;
+using IntegrationTests.Utils.SQLite;
 
 namespace IntegrationTests.Abstractions;
 

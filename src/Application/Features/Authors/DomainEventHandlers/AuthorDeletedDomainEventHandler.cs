@@ -8,17 +8,17 @@ namespace Application.Features.Authors.DomainEventHandlers;
 
 internal sealed class AuthorDeletedDomainEventHandler : IDomainEventHandler<AuthorDeletedDomainEvent>
 {
-    private readonly IBus _mesageBus;
+    private readonly IPublishEndpoint _publishEndpoint;
 
-    public AuthorDeletedDomainEventHandler(IBus mesageBus)
+    public AuthorDeletedDomainEventHandler(IPublishEndpoint publishEndpoint)
     {
-        _mesageBus = mesageBus;
+        _publishEndpoint = publishEndpoint;
     }
 
     public Task Handle(AuthorDeletedDomainEvent domainEvent, CancellationToken cancellationToken)
     {
         var integrationEvent = new AuthorDeletedIntegrationEvent(domainEvent.AuthorId);
 
-        return _mesageBus.Publish<IAuthorDeletedIntegrationEvent>(integrationEvent, cancellationToken);
+        return _publishEndpoint.Publish<IAuthorDeletedIntegrationEvent>(integrationEvent, cancellationToken);
     }
 }

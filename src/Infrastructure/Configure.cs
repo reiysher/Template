@@ -2,6 +2,7 @@
 using Infrastructure.Logging;
 using Infrastructure.Messaging;
 using Infrastructure.Notifications;
+using Infrastructure.Persistence;
 using Infrastructure.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
@@ -19,6 +20,7 @@ public static class Configure
         Assembly consumersAssembly)
     {
         return services
+            .AddPersistence(configuration)
             .RegisterMessaging(consumersAssembly)
             .AddDomainServices()
             .AddBackgroundJobs()

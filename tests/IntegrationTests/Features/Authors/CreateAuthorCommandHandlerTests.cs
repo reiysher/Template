@@ -4,15 +4,13 @@ using Application.Features.Authors.Commands.Create;
 using Domain.Authors;
 using Domain.Authors.Repositories;
 using Infrastructure.Messaging;
+using Infrastructure.Persistence;
+using Infrastructure.Persistence.Contexts;
+using Infrastructure.Persistence.Repositories.Authors;
 using IntegrationTests.Abstractions;
-using IntegrationTests.Utils.Spies;
 using IntegrationTests.Utils.SQLite;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Persistence;
-using Persistence.Contexts;
-using Persistence.Repositories.Authors;
 
 namespace IntegrationTests.Features.Authors;
 

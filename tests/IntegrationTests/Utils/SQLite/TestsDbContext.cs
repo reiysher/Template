@@ -1,6 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Infrastructure.Persistence.Contexts;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Persistence.Contexts;
 
 namespace IntegrationTests.Utils.SQLite;
 

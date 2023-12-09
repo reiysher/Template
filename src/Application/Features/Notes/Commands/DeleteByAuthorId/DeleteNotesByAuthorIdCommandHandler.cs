@@ -1,6 +1,5 @@
 ﻿using Application.Abstractions.Messaging.Commands;
 using Application.Abstractions.Persistence;
-using Domain.Authors;
 using Domain.Notes.Services;
 
 namespace Application.Features.Notes.Commands.DeleteByAuthorId;

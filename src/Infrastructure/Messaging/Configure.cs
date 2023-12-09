@@ -1,4 +1,5 @@
 ﻿using Application.Abstractions.Messaging.DomainEvents;
+using Infrastructure.Persistence.Contexts;
 using MassTransit;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
@@ -9,15 +10,35 @@ internal static class Configure
 {
     public static IServiceCollection RegisterMessaging(this IServiceCollection services, Assembly consumersAssembly)
     {
-
-        services.AddMassTransit(config =>
+        services.AddMassTransit(options =>
         {
-            config.SetSnakeCaseEndpointNameFormatter();
-            config.AddConsumers(consumersAssembly);
+            options.SetSnakeCaseEndpointNameFormatter();
+            options.AddConsumers(consumersAssembly);
 
-            config.UsingInMemory((context, cfg) =>
+            options.AddEntityFrameworkOutbox<ApplicationDbContext>(config =>
             {
-                cfg.ConfigureEndpoints(context);
+                // outbox
+                config.QueryDelay = TimeSpan.FromSeconds(5);
+                config.UseBusOutbox();
+
+                // inbox
+                config.DuplicateDetectionWindow = TimeSpan.FromSeconds(30);
+                config.DisableInboxCleanupService();
+
+                config.UsePostgres();
+            });
+
+            options.UsingRabbitMq((context, config) =>
+            {
+                config.AutoStart = true;
+                config.ConfigureEndpoints(context);
+            });
+
+            options.AddConfigureEndpointsCallback((context, name, config) =>
+            {
+                // for all endpoints
+                config.UseMessageRetry(r => r.Incremental(5, TimeSpan.FromMilliseconds(100), TimeSpan.FromMilliseconds(100)));
+                config.UseEntityFrameworkOutbox<ApplicationDbContext>(context);
             });
         });
 
