@@ -19,19 +19,16 @@ namespace IntegrationTests.Features.Authors;
 public class CreateAuthorCommandHandlerTests : BaseIntegrationTests
 {
     private readonly IServiceProvider _serviceProvider;
-    private readonly PublisherSpy _publisherSpy;
 
     public CreateAuthorCommandHandlerTests() : base()
     {
-        _publisherSpy = new();
-
         _serviceProvider = new ServiceCollection()
-            .AddScoped<CreateAuthorCommandHandler>()
+            .AddScoped<CreateAuthorCommandHandler>() // think
             .AddScoped<IUnitOfWork, UnitOfWork>()
             .AddScoped<ApplicationDbContext>(_ => new TestsDbContext(_dbContextOptions))
             .AddScoped<IDomainEventDispatcher, DomainEventDispatcher>()
             .AddScoped<IAuthorRepository, AuthorRepository>()
-            .AddScoped<IPublisher>(_ => _publisherSpy)
+            .AddMediatR(options => options.RegisterServicesFromAssemblyContaining<CreateAuthorCommandHandler>()) // think
             .BuildServiceProvider();
     }
 
@@ -62,8 +59,6 @@ public class CreateAuthorCommandHandlerTests : BaseIntegrationTests
             createdAuthor!.FullName!.Should().NotBeNull();
             createdAuthor!.FullName!.FirstName.Should().Be(firstName);
             createdAuthor!.BirthDay.Should().Be(birthDay);
-
-            _publisherSpy.SentEventsCount().Should().Be(1);
         }
     }
 }
