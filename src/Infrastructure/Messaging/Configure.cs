@@ -12,7 +12,7 @@ internal static class Configure
     {
         services.AddMassTransit(options =>
         {
-            options.SetSnakeCaseEndpointNameFormatter();
+            options.SetEndpointNameFormatter(new SnakeCaseEndpointNameFormatter('.', "template", false));
             options.AddConsumers(consumersAssembly);
 
             options.AddEntityFrameworkOutbox<ApplicationDbContext>(config =>
