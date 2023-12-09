@@ -2,7 +2,6 @@
 using Domain.Authors.Events;
 using Domain.Common;
 using Domain.Notes;
-using Domain.Notes.Events;
 using Domain.Notes.Guards;
 
 namespace Domain.Authors;

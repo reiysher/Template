@@ -26,7 +26,5 @@ internal class AuthorConfiguration : IEntityTypeConfiguration<Author>
             fullNameBuilder.Property(fn => fn.MiddleName)
                 .HasColumnName("middle_name");
         });
-
-        builder.Property<uint>("version").IsRowVersion();
     }
 }

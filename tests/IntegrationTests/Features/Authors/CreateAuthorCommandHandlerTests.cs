@@ -4,45 +4,66 @@ using Application.Features.Authors.Commands.Create;
 using Domain.Authors;
 using Domain.Authors.Repositories;
 using Infrastructure.Messaging;
+using IntegrationTests.Abstractions;
+using IntegrationTests.Utils.Spies;
+using IntegrationTests.Utils.SQLite;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Persistence;
+using Persistence.Contexts;
 using Persistence.Repositories.Authors;
 
 namespace IntegrationTests.Features.Authors;
 
 public class CreateAuthorCommandHandlerTests : BaseIntegrationTests
 {
+    private readonly IServiceProvider _serviceProvider;
+    private readonly PublisherSpy _publisherSpy;
+
+    public CreateAuthorCommandHandlerTests() : base()
+    {
+        _publisherSpy = new();
+
+        _serviceProvider = new ServiceCollection()
+            .AddScoped<CreateAuthorCommandHandler>()
+            .AddScoped<IUnitOfWork, UnitOfWork>()
+            .AddScoped<ApplicationDbContext>(_ => new TestsDbContext(_dbContextOptions))
+            .AddScoped<IDomainEventDispatcher, DomainEventDispatcher>()
+            .AddScoped<IAuthorRepository, AuthorRepository>()
+            .AddScoped<IPublisher>(_ => _publisherSpy)
+            .BuildServiceProvider();
+    }
+
     [Fact]
     public async Task Author_created_successfully()
     {
         // arrange
         Guid authorId;
         var firstName = "Maksim";
-        var birthDay = new DateTime(1990, 01, 08, 0, 0, 0, DateTimeKind.Utc);
+        var birthDay = new DateTime(1990, 1, 8, 0, 0, 0, DateTimeKind.Utc);
 
-        using (var dbContext = GetDbContext())
+        // act
+        using (var scope = _serviceProvider.CreateScope())
         {
-            var publisher = Substitute.For<IPublisher>(); // подумать как без мока обойтись
+            var sut = _serviceProvider.GetRequiredService<CreateAuthorCommandHandler>();
+            var command = new CreateAuthorCommand(firstName, birthDay);
 
-            IDomainEventDispatcher dispatcher = new DomainEventDispatcher(publisher);
-            IAuthorRepository authorRepository = new AuthorRepository(dbContext);
-            IUnitOfWork unitOfWork = new UnitOfWork(dbContext, dispatcher);
-            var sut = new CreateAuthorCommandHandler(authorRepository, unitOfWork);
-
-            // act
-            authorId = await sut.Handle(new CreateAuthorCommand(firstName, birthDay), CancellationToken.None);
+            authorId = await sut.Handle(command, CancellationToken.None);
         }
 
         // assert
-        using (var dbContext = GetDbContext())
+        using (var scope = _serviceProvider.CreateScope())
         {
+            var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
             var createdAuthor = await dbContext.Set<Author>().SingleOrDefaultAsync(a => a.Id == authorId);
 
             createdAuthor.Should().NotBeNull();
             createdAuthor!.FullName!.Should().NotBeNull();
             createdAuthor!.FullName!.FirstName.Should().Be(firstName);
             createdAuthor!.BirthDay.Should().Be(birthDay);
+
+            _publisherSpy.SentEventsCount().Should().Be(1);
         }
     }
 }
