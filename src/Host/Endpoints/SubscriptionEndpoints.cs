@@ -13,44 +13,52 @@ internal static class SubscriptionEndpoints
     {
         group.WithTags("Subscriptions");
 
-        group.MapPost("", async (
-            [FromBody] CreateSubscriptionCommand request, // todo: использовать запрос вместо команды
-            [FromServices] ISender sender,
-            CancellationToken cancellationToken) =>
-        {
-            //var command = new CreateAuthorCommand(CreateSubscriptionCommand.FirstName, request.BirthDay);
-            var result = await sender.Send(request, cancellationToken);
+        group.MapGet("{subscriptionId:guid}", Get)
+            .AllowAnonymous();
 
-            return Results.Ok(result);
-        })
+        group.MapPost("", Create)
             .Accepts<CreateSubscriptionCommand>(MediaTypeNames.Application.Json)
             .AllowAnonymous();
 
-        group.MapPut("renew", async (
-            [FromBody] RenewSubscriptionCommand request, // todo: использовать запрос вместо команды
-            [FromServices] ISender sender,
-            CancellationToken cancellationToken) =>
-        {
-            //var command = new CreateAuthorCommand(CreateSubscriptionCommand.FirstName, request.BirthDay);
-            await sender.Send(request, cancellationToken);
-
-            return Results.Ok();
-        })
+        group.MapPut("renew", Renew)
             .Accepts<RenewSubscriptionCommand>(MediaTypeNames.Application.Json)
             .AllowAnonymous();
 
-        group.MapGet("{subscriptionId}", async (
+        return group;
+    }
+
+    public static async Task<IResult> Get(
             [FromRoute] Guid subscriptionId,
             [FromServices] ISender sender,
-            CancellationToken cancellationToken) =>
-        {
-            var query = new GetSubscriptionQuery(subscriptionId);
-            var result = await sender.Send(query, cancellationToken);
+            CancellationToken cancellationToken)
+    {
+        var query = new GetSubscriptionQuery(subscriptionId);
+        var result = await sender.Send(query, cancellationToken);
 
-            return Results.Ok(result);
-        })
-            .AllowAnonymous();
+        return Results.Ok(result);
+    }
 
-        return group;
+
+    public static async Task<IResult> Create(
+            [FromBody] CreateSubscriptionCommand request, // todo: использовать запрос вместо команды
+            [FromServices] ISender sender,
+            CancellationToken cancellationToken)
+    {
+        //var command = new CreateAuthorCommand(CreateSubscriptionCommand.FirstName, request.BirthDay);
+        var result = await sender.Send(request, cancellationToken);
+
+        return Results.Ok(result);
+    }
+
+
+    public static async Task<IResult> Renew(
+            [FromBody] RenewSubscriptionCommand request, // todo: использовать запрос вместо команды
+            [FromServices] ISender sender,
+            CancellationToken cancellationToken)
+    {
+        //var command = new CreateAuthorCommand(CreateSubscriptionCommand.FirstName, request.BirthDay);
+        await sender.Send(request, cancellationToken);
+
+        return Results.Ok();
     }
 }
