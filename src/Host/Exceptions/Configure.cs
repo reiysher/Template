@@ -6,6 +6,7 @@ namespace Host.Exceptions;
 
 internal static class Configure
 {
+    // todo: thonk about IExceptionHandler in .net 8
     internal static IServiceCollection AddGlobalExceptionHandling(this IServiceCollection services)
     {
         services.AddProblemDetails(config =>
