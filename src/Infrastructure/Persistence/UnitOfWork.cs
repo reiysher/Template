@@ -2,35 +2,23 @@
 using Application.Abstractions.Persistence;
 using Domain.Common;
 using Infrastructure.Persistence.Contexts;
+using System.Data;
 
 namespace Infrastructure.Persistence;
 
-internal class UnitOfWork : IUnitOfWork
+internal class UnitOfWork(
+    ApplicationDbContext dbContext,
+    IDomainEventDispatcher dispatcher)
+    : IUnitOfWork
 {
-    private readonly ApplicationDbContext _dbContext;
-    private readonly IDomainEventDispatcher _dispatcher;
-
-    public UnitOfWork(
-        ApplicationDbContext dbContext,
-        IDomainEventDispatcher dispatcher)
-    {
-        _dbContext = dbContext;
-        _dispatcher = dispatcher;
-    }
+    private readonly ApplicationDbContext _dbContext = dbContext;
+    private readonly IDomainEventDispatcher _dispatcher = dispatcher;
 
     public async Task<int> CommitAsync(CancellationToken cancellationToken)
     {
         await SendDomainEventsAsync();
 
         var result = await _dbContext.SaveChangesAsync(cancellationToken);
-
-        // Если удалить агрегат, то ивенты с него не соберуться.
-        // Для интеграции с другими ограниченными контекстами,
-        // Необходимо мягкое удаление, что бы сохранить "ссылки"
-        // Так как во внешних системах могут быть id этих сущностей.
-        // todo: ISoftDelete
-
-        // await SendDomainEventsAsync();
 
         return result;
     }
@@ -41,7 +29,7 @@ internal class UnitOfWork : IUnitOfWork
             .ChangeTracker
             .Entries<IAggregate>()
             .Select(e => e.Entity)
-            .Where(e => e.DomainEvents.Any())
+            .Where(e => e.DomainEvents.Count > 0)
             .ToArray();
 
         return _dispatcher.Dispatch(aggregatesWithEvents);
