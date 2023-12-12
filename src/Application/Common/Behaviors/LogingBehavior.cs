@@ -3,14 +3,12 @@ using Microsoft.Extensions.Logging;
 
 namespace Application.Common.Behaviors;
 
-internal class LogingBehavior<TRequest, TResponse>
+internal class LogingBehavior<TRequest, TResponse>(
+    ILogger<TRequest> logger)
     : IPipelineBehavior<TRequest, TResponse>
     where TRequest : IBaseRequest
 {
-    private readonly ILogger<TRequest> _logger;
-
-    public LogingBehavior(ILogger<TRequest> logger) =>
-        _logger = logger;
+    private readonly ILogger<TRequest> _logger = logger;
 
     public async Task<TResponse> Handle(TRequest request,
         RequestHandlerDelegate<TResponse> next,
