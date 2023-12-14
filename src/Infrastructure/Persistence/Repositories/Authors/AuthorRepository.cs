@@ -2,7 +2,6 @@
 using Domain.Authors.Repositories;
 using Infrastructure.Persistence.Contexts;
 using Microsoft.EntityFrameworkCore;
-using System.Numerics;
 
 namespace Infrastructure.Persistence.Repositories.Authors;
 

@@ -6,14 +6,10 @@ using MongoDB.Driver;
 
 namespace Infrastructure.Persistence.Repositories.Authors;
 
-internal class MongoDbAuthorRepository : IAuthorRepository
+internal class MongoDbAuthorRepository(MongoDbContext dbContext)
+    : IAuthorRepository
 {
-    private readonly MongoDbContext _dbContext;
-
-    public MongoDbAuthorRepository(MongoDbContext dbContext, string collectionName = "")
-    {
-        _dbContext = Guard.Against.Null(dbContext, nameof(dbContext));
-    }
+    private readonly MongoDbContext _dbContext = Guard.Against.Null(dbContext, nameof(dbContext));
 
     public void Insert(Author author)
     {
@@ -40,9 +36,9 @@ internal class MongoDbAuthorRepository : IAuthorRepository
         return _dbContext.Authors.DeleteOneAsync(a => a.Id == author.Id, cancellationToken);
     }
 
-    public Task<Author> GetById(Guid authorId, CancellationToken cancellationToken)
+    public async Task<Author?> GetById(Guid authorId, CancellationToken cancellationToken)
     {
-        return _dbContext.Authors.Find(a => a.Id == authorId).FirstOrDefaultAsync(cancellationToken);
+        return await _dbContext.Authors.Find(a => a.Id == authorId).FirstOrDefaultAsync(cancellationToken);
     }
 
     public Task<IReadOnlyCollection<Author>> GetList(int page = 1, int size = int.MaxValue, CancellationToken cancellationToken = default)
