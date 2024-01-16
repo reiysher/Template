@@ -7,21 +7,14 @@ using Domain.Notes.Repositories;
 
 namespace Application.Features.Notes.Commands.Create;
 
-internal class CreateNoteCommandHandler : ICommandHandler<CreateNoteCommand>
+internal class CreateNoteCommandHandler(
+    INoteRepository repository,
+    IAuthorRepository authorRepository,
+    IUnitOfWork unitOfWork) : ICommandHandler<CreateNoteCommand>
 {
-    private readonly INoteRepository _noteRepository;
-    private readonly IAuthorRepository _authorRepository;
-    private readonly IUnitOfWork _unitOfWork;
-
-    public CreateNoteCommandHandler(
-        INoteRepository repository,
-        IAuthorRepository authorRepository,
-        IUnitOfWork unitOfWork)
-    {
-        _noteRepository = repository;
-        _authorRepository = authorRepository;
-        _unitOfWork = unitOfWork;
-    }
+    private readonly INoteRepository _noteRepository = repository;
+    private readonly IAuthorRepository _authorRepository = authorRepository;
+    private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
     public async Task Handle(CreateNoteCommand command, CancellationToken cancellationToken)
     {
