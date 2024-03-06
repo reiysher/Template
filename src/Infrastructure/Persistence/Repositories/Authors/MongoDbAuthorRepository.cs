@@ -16,6 +16,12 @@ internal class MongoDbAuthorRepository(MongoDbContext dbContext)
         _dbContext.Authors.InsertOne(author);
     }
 
+    public Task<IReadOnlyCollection<Author>> Search(SearchAuthorCriteria criteria, CancellationToken cancellationToken)
+    {
+        // todo: implement mongo search
+        throw new NotImplementedException();
+    }
+
     public Task AddAsync(Author author, CancellationToken cancellationToken)
     {
         return _dbContext.Authors.InsertOneAsync(author, new InsertOneOptions { }, cancellationToken);

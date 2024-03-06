@@ -1,4 +1,5 @@
 ﻿using Application.Abstractions.Messaging.Queries;
+using Application.Features.Authors.Models;
 using Ardalis.GuardClauses;
 using Domain.Authors;
 using Domain.Authors.Guards;
