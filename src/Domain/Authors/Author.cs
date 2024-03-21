@@ -12,7 +12,7 @@ public sealed class Author : Aggregate<Guid>, IAggregateRoot
 
     public DateTime BirthDay { get; private set; }
 
-    public DateTime Created { get; set; }
+    public DateTime Created { get; private set; }
 
     private Author()
     {
